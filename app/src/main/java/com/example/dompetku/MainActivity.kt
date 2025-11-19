@@ -9,12 +9,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.*
 import com.example.dompetku.screen.*
 import com.example.dompetku.ui.TransaksiScreen
+import com.example.dompetku.utils.Prefs
 import com.example.dompetku.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +34,22 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
     val navController = rememberNavController()
     val viewModel = remember { AuthViewModel() }
+    val context = LocalContext.current
+    val prefs = remember { Prefs(context) }
 
+    // 🔥 Cek token saat app mulai
+    val isLoggedIn = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        val savedToken = prefs.getToken()
+        if (savedToken != null) {
+            viewModel.token = savedToken
+            isLoggedIn.value = true
+        }
+    }
+
+    // START DESTINATION otomatis
+    val startRoute = if (isLoggedIn.value) NavDestination.Login else NavDestination.Login
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -71,7 +85,7 @@ fun MainApp() {
 
         NavHost(
             navController = navController,
-            startDestination = NavDestination.Login,
+            startDestination = startRoute,
             modifier = Modifier.padding(padding)
         ) {
 
@@ -80,8 +94,9 @@ fun MainApp() {
                 LoginScreen(
                     viewModel = viewModel,
                     onLoginSuccess = {
+                        // Simpan token otomatis melalui Prefs di ViewModel
                         navController.navigate(NavDestination.Home) {
-                            popUpTo(NavDestination.Login) { inclusive = true }
+                            popUpTo(0) { inclusive = true } // 🔥 Tidak bisa balik ke Login
                         }
                     },
                     onRegisterClick = {
@@ -96,7 +111,7 @@ fun MainApp() {
                     viewModel = viewModel,
                     onRegisterSuccess = {
                         navController.navigate(NavDestination.Home) {
-                            popUpTo(NavDestination.Daftar) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
                         }
                     },
                     onLoginClick = {
@@ -123,7 +138,12 @@ fun MainApp() {
 
             // ---------- AKTIVITAS ----------
             composable(NavDestination.Aktivitas) {
+                val context = LocalContext.current
+                val prefs = Prefs(context)
+                val token = prefs.getToken() ?: ""
+
                 AktivitasScreen(
+                    token = token,
                     onBack = { navController.popBackStack() }
                 )
             }
@@ -131,7 +151,22 @@ fun MainApp() {
             // ---------- PROFIL ----------
             composable(NavDestination.Profil) {
                 ProfileScreen(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onEditProfile = {
+                        // TODO: Navigate to edit profile
+                    },
+                    onChangePassword = {
+                        // TODO: Navigate to change password
+                    },
+                    onLogout = {
+                        // Clear user data
+                        viewModel.logout(prefs)
+
+                        // Navigate to login
+                        navController.navigate(NavDestination.Login) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             }
         }

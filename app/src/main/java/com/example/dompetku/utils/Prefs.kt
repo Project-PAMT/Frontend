@@ -9,6 +9,9 @@ class Prefs(context: Context) {
 
     companion object {
         private const val KEY_TOKEN = "user_token"
+        private const val KEY_USER_ID = "user_id"
+        private const val KEY_USER_NAME = "user_name"
+        private const val KEY_USER_EMAIL = "user_email"
     }
 
     fun saveToken(token: String) {
@@ -25,5 +28,32 @@ class Prefs(context: Context) {
 
     fun isLoggedIn(): Boolean {
         return getToken() != null
+    }
+
+    // User data functions
+    fun saveUserData(userId: String, name: String, email: String) {
+        prefs.edit().apply {
+            putString(KEY_USER_ID, userId)
+            putString(KEY_USER_NAME, name)
+            putString(KEY_USER_EMAIL, email)
+            apply()
+        }
+    }
+
+    fun getUserId(): String? {
+        return prefs.getString(KEY_USER_ID, null)
+    }
+
+    fun getUserName(): String {
+        return prefs.getString(KEY_USER_NAME, "") ?: ""
+    }
+
+    fun getUserEmail(): String {
+        return prefs.getString(KEY_USER_EMAIL, "") ?: ""
+    }
+
+    // Clear all data (untuk logout)
+    fun clearAllData() {
+        prefs.edit().clear().apply()
     }
 }

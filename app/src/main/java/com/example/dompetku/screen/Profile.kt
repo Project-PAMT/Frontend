@@ -16,20 +16,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.dompetku.utils.Prefs
 
 @Composable
 fun ProfileScreen(
-    name: String = "Keonho Kartanegara",
-    email: String = "Keonho.kartanegara@email.com",
     onBack: () -> Unit = {},
     onEditProfile: () -> Unit = {},
     onChangePassword: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val prefs = Prefs(context)
+    val name = prefs.getUserName()
+    val email = prefs.getUserEmail()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,6 +71,7 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Avatar dengan inisial
             Box(
                 modifier = Modifier
                     .size(96.dp)
@@ -74,11 +80,29 @@ fun ProfileScreen(
                         Brush.linearGradient(
                             listOf(Color(0xFFFFC107), Color(0xFFEC4899), HeaderBlueEnd)
                         )
-                    )
-            )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = getInitials(name),
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(name, color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text(email, color = Color.Gray, fontSize = 12.sp)
+                Text(
+                    text = name.ifEmpty { "Nama Pengguna" },
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = email.ifEmpty { "email@example.com" },
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
             }
 
             Column(
@@ -136,12 +160,25 @@ private fun ProfileActionItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 Icon(icon, contentDescription = null, tint = Color.Gray)
                 Text(label, color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Medium)
             }
             Icon(Icons.Outlined.ArrowForward, contentDescription = null, tint = Color.Gray)
         }
+    }
+}
+
+// Fungsi helper untuk mendapatkan inisial dari nama
+private fun getInitials(name: String): String {
+    if (name.isEmpty()) return "?"
+    val words = name.trim().split(" ")
+    return when {
+        words.size >= 2 -> "${words[0].first()}${words[1].first()}".uppercase()
+        else -> words[0].take(2).uppercase()
     }
 }
 

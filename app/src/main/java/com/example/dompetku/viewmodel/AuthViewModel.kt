@@ -44,9 +44,15 @@ class AuthViewModel : ViewModel() {
 
                 // SIMPAN TOKEN KE SHAREDPREFERENCES
                 prefs.saveToken(res.token)
+                prefs.saveUserData(
+                    userId = res.user.id.toString(),
+                    name = res.user.name,
+                    email = res.user.email
+                )
                 Log.d("AuthViewModel", "Token saved to SharedPreferences")
 
                 _loginState.value = AuthState(success = true)
+
 
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
@@ -88,5 +94,26 @@ class AuthViewModel : ViewModel() {
                 _registerState.value = AuthState(error = e.message)
             }
         }
+    }
+
+    fun logout(prefs: Prefs) {
+        Log.d("AuthViewModel", "=== LOGOUT ===")
+        prefs.clearAllData()
+        token = null
+        fullName = ""
+        _loginState.value = AuthState()
+        _registerState.value = AuthState()
+    }
+
+    fun resetLoginState() {
+        _loginState.value = AuthState()
+    }
+
+    fun resetRegisterState() {
+        _registerState.value = AuthState()
+    }
+
+    fun loadSavedToken(prefs: Prefs) {
+        token = prefs.getToken()
     }
 }
