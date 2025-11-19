@@ -1,5 +1,6 @@
 package com.example.dompetku.screen
 
+import android.util.Log
 import com.example.dompetku.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
@@ -12,12 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dompetku.utils.Prefs
 import com.example.dompetku.viewmodel.AuthViewModel
 
 @Composable
@@ -26,6 +29,9 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val prefs = remember { Prefs(context) }  // ✅ Buat Prefs di sini
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -39,6 +45,7 @@ fun LoginScreen(
 
     LaunchedEffect(state.success) {
         if (state.success) {
+            Log.d("LoginScreen", "Login berhasil, token tersimpan")
             onLoginSuccess()
         }
     }
@@ -138,7 +145,10 @@ fun LoginScreen(
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = { viewModel.login(email, password) },
+                onClick = {
+                    Log.d("LoginScreen", "Login button clicked: email=$email")
+                    viewModel.login(email, password, prefs)  // ✅ Pass prefs
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -158,7 +168,7 @@ fun LoginScreen(
 
             state.error?.let {
                 Spacer(Modifier.height(16.dp))
-                Text(it, color = Color.Red)
+                Text("Error: $it", color = Color.Red, fontSize = 14.sp)
             }
 
             Spacer(Modifier.height(24.dp))

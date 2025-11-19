@@ -4,10 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.padding
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.dompetku.screen.*
+import com.example.dompetku.ui.TransaksiScreen
 import com.example.dompetku.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
@@ -15,51 +22,117 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            MaterialTheme {
+                Surface {
+                    MainApp()
+                }
+            }
+        }
+    }
+}
 
-            val navController = rememberNavController()
-            val viewModel = AuthViewModel()
+@Composable
+fun MainApp() {
+    val navController = rememberNavController()
+    val viewModel = remember { AuthViewModel() }
 
-            NavHost(
-                navController = navController,
-                startDestination = NavDestination.Login
+
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    Scaffold(
+        bottomBar = {
+            if (currentRoute in listOf(
+                    NavDestination.Home,
+                    NavDestination.Transaksi,
+                    NavDestination.Aktivitas,
+                    NavDestination.Profil
+                )
             ) {
-
-                // ---------- LOGIN ----------
-                composable(NavDestination.Login) {
-                    LoginScreen(
-                        viewModel = viewModel,
-                        onLoginSuccess = {
-                            navController.navigate("home") {
-                                popUpTo(NavDestination.Login) { inclusive = true }
-                            }
-                        },
-                        onRegisterClick = {
-                            navController.navigate(NavDestination.Daftar)
+                BottomNavbar(
+                    selected = when (currentRoute) {
+                        NavDestination.Home -> NavItem.Beranda
+                        NavDestination.Transaksi -> NavItem.Transaksi
+                        NavDestination.Aktivitas -> NavItem.Aktivitas
+                        NavDestination.Profil -> NavItem.Profil
+                        else -> NavItem.Beranda
+                    },
+                    onSelected = { item ->
+                        when (item) {
+                            NavItem.Beranda -> navController.navigate(NavDestination.Home)
+                            NavItem.Transaksi -> navController.navigate(NavDestination.Transaksi)
+                            NavItem.Aktivitas -> navController.navigate(NavDestination.Aktivitas)
+                            NavItem.Profil -> navController.navigate(NavDestination.Profil)
                         }
-                    )
-                }
+                    }
+                )
+            }
+        }
+    ) { padding ->
 
-                // ---------- REGISTER ----------
-                composable(NavDestination.Daftar) {
-                    RegisterScreen(
-                        viewModel = viewModel,
-                        onRegisterSuccess = {
-                            navController.navigate("home") {
-                                popUpTo(NavDestination.Daftar) { inclusive = true }
-                            }
-                        },
-                        onLoginClick = {
-                            navController.navigate(NavDestination.Login)
+        NavHost(
+            navController = navController,
+            startDestination = NavDestination.Login,
+            modifier = Modifier.padding(padding)
+        ) {
+
+            // ---------- LOGIN ----------
+            composable(NavDestination.Login) {
+                LoginScreen(
+                    viewModel = viewModel,
+                    onLoginSuccess = {
+                        navController.navigate(NavDestination.Home) {
+                            popUpTo(NavDestination.Login) { inclusive = true }
                         }
-                    )
-                }
+                    },
+                    onRegisterClick = {
+                        navController.navigate(NavDestination.Daftar)
+                    }
+                )
+            }
 
-                // ---------- HOME ----------
-                composable("home") {
-                    DashboardScreen(
-                        onAddClick = { /* tambah transaksi soon */ }
-                    )
-                }
+            // ---------- REGISTER ----------
+            composable(NavDestination.Daftar) {
+                RegisterScreen(
+                    viewModel = viewModel,
+                    onRegisterSuccess = {
+                        navController.navigate(NavDestination.Home) {
+                            popUpTo(NavDestination.Daftar) { inclusive = true }
+                        }
+                    },
+                    onLoginClick = {
+                        navController.navigate(NavDestination.Login)
+                    }
+                )
+            }
+
+            // ---------- HOME / DASHBOARD ----------
+            composable(NavDestination.Home) {
+                DashboardScreen(
+                    onAddClick = {
+                        navController.navigate(NavDestination.Transaksi)
+                    }
+                )
+            }
+
+            // ---------- TRANSAKSI ----------
+            composable(NavDestination.Transaksi) {
+                TransaksiScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            // ---------- AKTIVITAS ----------
+            composable(NavDestination.Aktivitas) {
+                AktivitasScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            // ---------- PROFIL ----------
+            composable(NavDestination.Profil) {
+                ProfileScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
