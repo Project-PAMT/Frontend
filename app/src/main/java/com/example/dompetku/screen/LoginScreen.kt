@@ -1,207 +1,183 @@
 package com.example.dompetku.screen
 
+import com.example.dompetku.R
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.example.dompetku.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    onLoginClick: (String, String) -> Unit = { _, _ -> },
+    viewModel: AuthViewModel,
+    onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit = {},
-    onForgotPasswordClick: () -> Unit = {}
 ) {
-    // State
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // Colors (mirip Tailwind config)
-    val backgroundLight = Color(0xFFF6F7F8)
-    val primaryColor = Color(0xFF137FEC)
+    val state = viewModel.loginState.collectAsState().value
+
+    val primaryColor = Color(0xFF0D6EFD)
+    val backgroundLight = Color(0xFFFFFFFF)
+    val textGray = Color(0xFF9E9E9E)
+    val textBlack = Color(0xFF2C3E50)
+
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            onLoginSuccess()
+        }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundLight)
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
                 .align(Alignment.TopCenter)
-                .padding(top = 40.dp)
                 .widthIn(max = 400.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // ---------- LOGO ----------
-            AsyncImage(
-                model = "https://lh3.googleusercontent.com/aida-public/AB6AXuA_bsNA9-pFCZjaYk8PjNuRsaOYThssO5LLDMKG9_BdDvxYaxlAQj90ESJlfTmMiqbz-ZoCb4tPmkQqvCP3V1rFaJNzpiqgeYGBglFDC_yVqUBzXZB1jEFMIFFQJYbBg-LXusa97APxTBWWKl2I-6vaCOsJ0Ek89iQLILATW2nvkEv29nGDP1Ycpus685PW2vzdD5j8y56WFcbJNmDyeRADILPouSZfkvbUkrwFE_p1cBCNOTrsP3Mgxx44NGCyvuk5YYiwpeohBaA",
-                contentDescription = "App Logo",
+            Spacer(Modifier.height(32.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.logo_dompetku),
+                contentDescription = "Logo DompetKu",
                 modifier = Modifier
-                    .size(160.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+                    .width(280.dp)
+                    .height(120.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // ---------- HEADLINE ----------
-            Text(
-                text = "Selamat Datang Kembali",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 6.dp),
-            )
+            Spacer(Modifier.height(32.dp))
 
             Text(
-                text = "Masuk untuk mengelola keuangan Anda",
+                "Email",
                 fontSize = 16.sp,
-                color = Color(0xFF666666)
+                fontWeight = FontWeight.SemiBold,
+                color = textBlack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // ---------- EMAIL ----------
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email atau Username") },
-                leadingIcon = {
-                    Icon(Icons.Default.Person, contentDescription = null)
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                placeholder = { Text("Masukkan email Anda", color = Color(0xFFBDBDBD), fontSize = 15.sp) },
+                leadingIcon = { Icon(Icons.Outlined.Mail, null, tint = Color(0xFF9E9E9E)) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = primaryColor,
-                    focusedLabelColor = primaryColor
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
                 )
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // ---------- PASSWORD ----------
+            Text(
+                "Kata Sandi",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = textBlack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Kata Sandi") },
-                leadingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = null)
-                },
+                placeholder = { Text("Masukkan kata sandi Anda", color = Color(0xFFBDBDBD), fontSize = 15.sp) },
+                leadingIcon = { Icon(Icons.Outlined.Lock, null, tint = Color(0xFF9E9E9E)) },
                 trailingIcon = {
-                    IconButton(onClick = {
-                        passwordVisible = !passwordVisible
-                    }) {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            imageVector = if (passwordVisible) Icons.Default.Visibility
-                            else Icons.Default.VisibilityOff,
-                            contentDescription = "Toggle Password",
+                            if (passwordVisible) Icons.Outlined.Visibility
+                            else Icons.Outlined.VisibilityOff,
+                            contentDescription = null,
+                            tint = Color(0xFF9E9E9E)
                         )
                     }
                 },
+                visualTransformation =
+                    if (passwordVisible) VisualTransformation.None
+                    else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = primaryColor,
-                    focusedLabelColor = primaryColor
-                ),
-                visualTransformation = if (passwordVisible)
-                    VisualTransformation.None else PasswordVisualTransformation()
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                )
             )
 
-            // ---------- Forgot password ----------
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = { onForgotPasswordClick() }) {
-                    Text(
-                        text = "Lupa Kata Sandi?",
-                        color = primaryColor,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+            Spacer(Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // ---------- BUTTON LOGIN ----------
             Button(
-                onClick = { onLoginClick(email, password) },
+                onClick = { viewModel.login(email, password) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                enabled = !state.loading,
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = primaryColor
                 )
             ) {
-                Text(text = "Masuk", fontSize = 18.sp)
+                Text("Masuk", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            if (state.loading) {
+                Spacer(Modifier.height(16.dp))
+                CircularProgressIndicator(color = primaryColor)
+            }
 
-            // ---------- REGISTER ----------
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Belum punya akun?",
-                    color = Color(0xFF666666),
-                    fontSize = 14.sp
-                )
+            state.error?.let {
+                Spacer(Modifier.height(16.dp))
+                Text(it, color = Color.Red)
+            }
 
-                Spacer(modifier = Modifier.width(6.dp))
+            Spacer(Modifier.height(24.dp))
 
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Belum punya akun?", color = textGray, fontSize = 15.sp)
+                Spacer(Modifier.width(6.dp))
                 TextButton(
-                    onClick = { onRegisterClick() },
-                    contentPadding = PaddingValues(0.dp),    // ⬅️ Hilangkan padding default
-                    modifier = Modifier.height(IntrinsicSize.Min)
+                    onClick = onRegisterClick,
+                    contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
                         "Daftar",
                         color = primaryColor,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
                     )
                 }
             }
         }
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    MaterialTheme {
-        Surface {
-            LoginScreen()
-        }
-    }
-}
-
