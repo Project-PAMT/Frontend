@@ -29,7 +29,7 @@ val BackgroundLight = Color(0xFFF6F7F8)
 val GreenIncome = Color(0xFF10B981)
 val RedExpense = Color(0xFFEF4444)
 val BlueIncome = Color(0xFF1E88E5)
-val HeaderBlueStart = Color(0xFF2F80ED)
+val HeaderBlueStart = Color(0xFF269AFD)
 val HeaderBlueEnd = Color(0xFF56CCF2)
 
 
@@ -43,16 +43,13 @@ fun DashboardScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(Brush.verticalGradient(listOf(HeaderBlueStart, HeaderBlueEnd)))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
-                    .background(
-                        Brush.verticalGradient(listOf(HeaderBlueStart, HeaderBlueEnd))
-                    )
             ) {
                 Row(
                     modifier = Modifier
@@ -70,20 +67,16 @@ fun DashboardScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
+
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                    .background(BackgroundLight)
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 BalanceCard(
@@ -102,7 +95,7 @@ fun DashboardScreen(
         ) {
             FloatingActionButton(
                 onClick = onAddClick,
-                containerColor = HeaderBlueEnd,
+                containerColor = HeaderBlueStart,
                 modifier = Modifier.padding(end = 24.dp, bottom = 24.dp)
             ) {
                 Icon(Icons.Outlined.Edit, contentDescription = null, tint = Color.White)
@@ -126,7 +119,7 @@ fun SummaryCard(title: String, amount: String, color: Color, icon: ImageVector) 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        
+
         // Bagian Kiri: Icon & Title
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -139,8 +132,8 @@ fun SummaryCard(title: String, amount: String, color: Color, icon: ImageVector) 
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    icon, 
-                    contentDescription = null, 
+                    icon,
+                    contentDescription = null,
                     tint = color,
                     modifier = Modifier.size(24.dp)
                 )

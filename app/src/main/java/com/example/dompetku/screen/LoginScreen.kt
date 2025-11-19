@@ -158,7 +158,8 @@ fun LoginScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryColor
+                    containerColor = Color(0xFF269AFD),
+                    contentColor = Color.White
                 )
             ) {
                 Text(text = "Masuk", fontSize = 18.sp)

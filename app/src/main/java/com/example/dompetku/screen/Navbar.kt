@@ -19,7 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
 
-enum class NavItem { Beranda, Transaksi, Kategori, Profil }
+enum class NavItem { Beranda, Transaksi, Aktivitas, Profil }
 
 @Composable
 fun BottomNavbar(
@@ -61,10 +61,10 @@ fun BottomNavbar(
             NavBarItem(
                 label = "Aktivitas",
                 icon = Icons.Outlined.Category,
-                selected = selected == NavItem.Kategori,
+                selected = selected == NavItem.Aktivitas,
                 activeColor = activeColor,
                 inactiveColor = inactiveColor,
-                onClick = { onSelected(NavItem.Kategori) }
+                onClick = { onSelected(NavItem.Aktivitas) }
             )
             NavBarItem(
                 label = "Profil",

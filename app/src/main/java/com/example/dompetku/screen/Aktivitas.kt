@@ -1,4 +1,3 @@
-// c:\Users\WINDOWS 11\AndroidStudioProjects\Dompetku\app\src\main\java\com\example\dompetku\screen\RiwayatTransaksi.kt
 package com.example.dompetku.screen
 
 import androidx.compose.foundation.background
@@ -28,65 +27,70 @@ data class TransactionItemData(
 )
 
 @Composable
-fun RiwayatTransaksiScreen(onBack: () -> Unit = {}) {
-    Column(
+fun AktivitasScreen(onBack: () -> Unit = {}) {
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(Brush.verticalGradient(listOf(HeaderBlueStart, HeaderBlueEnd)))
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp)
-                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                .background(Brush.verticalGradient(listOf(HeaderBlueStart, HeaderBlueEnd)))
-        ) {
-            IconButton(
-                onClick = onBack,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 8.dp)
-            ) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = null, tint = Color.White)
-            }
-            Text(
-                text = "Riwayat Transaksi",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
-            TransactionSection(
-                title = "Hari Ini",
-                items = listOf(
-                    TransactionItemData("Oyi Chicken Butter Milk", "Makanan", "Rp 24.000", false),
-                    TransactionItemData("Transfer Ibu", "Pemasukan", "Rp 100.000", true),
-                    TransactionItemData("Beli Bensin", "Transportasi", "Rp 25.000", false)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp)
+                    .background(Color(0xFF269AFD))
+            ) {
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 8.dp)
+                ) {
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = null, tint = Color.White)
+                }
+                Text(
+                    text = "Aktivitas",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center)
                 )
-            )
-            TransactionSection(
-                title = "Kemarin",
-                items = listOf(
-                    TransactionItemData("Creamy Pesenkopi", "Minuman", "Rp 18.000", false),
-                    TransactionItemData("Warung Pojok", "Makanan", "Rp 12.000", false)
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                    .background(BackgroundLight)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TransactionSection(
+                    title = "Hari Ini",
+                    items = listOf(
+                        TransactionItemData("Oyi Chicken Butter Milk", "Makanan", "Rp 24.000", false),
+                        TransactionItemData("Transfer Ibu", "Pemasukan", "Rp 100.000", true),
+                        TransactionItemData("Beli Bensin", "Transportasi", "Rp 25.000", false)
+                    )
                 )
-            )
-            TransactionSection(
-                title = "17 Oktober 2025",
-                items = listOf(
-                    TransactionItemData("Latte CW Coffee", "Minuman", "Rp 18.000", false),
-                    TransactionItemData("Warung Pojok", "Makanan", "Rp 10.000", false)
+                TransactionSection(
+                    title = "Kemarin",
+                    items = listOf(
+                        TransactionItemData("Creamy Pesenkopi", "Minuman", "Rp 18.000", false),
+                        TransactionItemData("Warung Pojok", "Makanan", "Rp 12.000", false)
+                    )
                 )
-            )
+                TransactionSection(
+                    title = "17 Oktober 2025",
+                    items = listOf(
+                        TransactionItemData("Latte CW Coffee", "Minuman", "Rp 18.000", false),
+                        TransactionItemData("Warung Pojok", "Makanan", "Rp 10.000", false)
+                    )
+                )
+            }
         }
     }
 }
@@ -131,6 +135,6 @@ fun TransactionListItem(item: TransactionItemData) {
 
 @Preview(showBackground = true)
 @Composable
-fun RiwayatTransaksiPreview() {
-    RiwayatTransaksiScreen()
+fun AktivitasPreview() {
+    AktivitasScreen()
 }

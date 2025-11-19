@@ -143,7 +143,8 @@ fun RegisterScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = primary
+                    containerColor = Color(0xFF269AFD),
+                    contentColor = Color.White
                 )
             ) {
                 Text("Daftar", fontSize = 18.sp)
