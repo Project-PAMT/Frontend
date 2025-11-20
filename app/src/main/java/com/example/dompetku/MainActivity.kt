@@ -1,5 +1,6 @@
 package com.example.dompetku
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.example.dompetku.screen.*
 import com.example.dompetku.ui.TransaksiScreen
 import com.example.dompetku.utils.Prefs
@@ -37,7 +40,6 @@ fun MainApp() {
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
 
-    // 🔥 Cek token saat app mulai
     val isLoggedIn = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -49,7 +51,7 @@ fun MainApp() {
     }
 
     // START DESTINATION otomatis
-    val startRoute = if (isLoggedIn.value) NavDestination.Login else NavDestination.Login
+    val startRoute = if (isLoggedIn.value) NavDestination.Home else NavDestination.Login
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -122,6 +124,10 @@ fun MainApp() {
 
             // ---------- HOME / DASHBOARD ----------
             composable(NavDestination.Home) {
+                val sharedPreferences = context.getSharedPreferences("DompetkuPrefs", Context.MODE_PRIVATE)
+                val token = sharedPreferences.getString("token", "") ?: ""
+                val userName = sharedPreferences.getString("user_name", "User") ?: "User"
+
                 DashboardScreen(
                     onAddClick = {
                         navController.navigate(NavDestination.Transaksi)
@@ -144,7 +150,26 @@ fun MainApp() {
 
                 AktivitasScreen(
                     token = token,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onTransactionClick = { transactionId ->
+                        navController.navigate("transaction_detail/$transactionId")
+                    }
+                )
+            }
+
+            // ---------- DETAIL TRANSAKSI (BARU) ----------
+            composable(
+                route = "transaction_detail/{transactionId}",
+                arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: 0
+                TransactionDetailScreen(
+                    transactionId = transactionId,
+                    onBack = { navController.popBackStack() },
+                    onEdit = { id ->
+                        // TODO: Navigate ke edit screen (nanti bisa dibuat)
+                        // navController.navigate("edit_transaction/$id")
+                    }
                 )
             }
 

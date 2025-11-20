@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import com.example.dompetku.screen.RedExpense
 
 @Composable
 fun TransaksiScreen(
@@ -39,6 +40,8 @@ fun TransaksiScreen(
     // Inject ViewModel langsung dari Compose
     val categoryVM: CategoryViewModel = viewModel()
     val transactionVM: TransactionViewModel = viewModel()
+
+    val primaryColor = Color(0xFF0D6EFD)
 
     val context = LocalContext.current
     val prefs = Prefs(context)
@@ -60,18 +63,17 @@ fun TransaksiScreen(
         } ?: Log.e("TransaksiScreen", "Token null!")
     }
 
-// Tambahkan observer untuk categories
     LaunchedEffect(categoryVM.categories.value) {
         Log.d("TransaksiScreen", "Categories updated: ${categoryVM.categories.value.size}")
     }
 
-    // Handle success / error
     LaunchedEffect(transactionVM.success.value) {
         transactionVM.success.value?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             onBack()
         }
     }
+
     LaunchedEffect(transactionVM.error.value) {
         transactionVM.error.value?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -84,7 +86,6 @@ fun TransaksiScreen(
             .background(Color(0xFF1E90FF))
     ) {
 
-        // Header
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -108,7 +109,6 @@ fun TransaksiScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // Tabs
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -322,7 +322,11 @@ fun TransaksiScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryColor,
+                    contentColor = Color.White
+                )
             ) {
                 Text(
                     if (transactionVM.loading.value) "Memproses..." else "Tambah",
@@ -330,12 +334,15 @@ fun TransaksiScreen(
                 )
             }
 
+// Error handling
             categoryVM.error.value?.let {
                 Text(it, color = Color.Red)
             }
+
             transactionVM.error.value?.let {
                 Text(it, color = Color.Red)
             }
+
         }
     }
 }

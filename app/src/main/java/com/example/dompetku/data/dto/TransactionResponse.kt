@@ -20,7 +20,7 @@ data class TransactionData(
     val amount: Int,
     val type: String,
     val category_id: Int?,
-    val category_name: String? = null, // Nama kategori dari backend (optional)
+    val category_name: String? = null,
     val date: String,
     val description: String? = null,
     val created_at: String

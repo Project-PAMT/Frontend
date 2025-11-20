@@ -16,8 +16,4 @@ class AuthRepository {
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return RetrofitInstance.api.register(RegisterRequest(name, email, password))
     }
-
-//    suspend fun getProfile(token: String): LoginResponse {
-//        return api.getProfile("Bearer $token")
-//    }
 }

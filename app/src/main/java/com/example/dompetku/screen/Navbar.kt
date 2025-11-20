@@ -26,7 +26,7 @@ fun BottomNavbar(
     selected: NavItem,
     onSelected: (NavItem) -> Unit
 ) {
-    val activeColor = HeaderBlueStart
+    val activeColor = Primary
     val inactiveColor = Color(0xFF9AA6B2)
 
     Surface(

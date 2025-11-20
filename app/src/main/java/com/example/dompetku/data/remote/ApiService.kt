@@ -40,6 +40,18 @@ interface ApiService {
         @Header("Authorization") token: String
     ): TransactionListResponse
 
+    @GET("transactions/{id}")
+    suspend fun getTransactionDetail(
+        @Header("Authorization") token: String,
+        @Path("id") transactionId: Int
+    ): TransactionResponse
+
+    @DELETE("transactions/{id}")
+    suspend fun deleteTransaction(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): TransactionResponse
+
     @GET("categories")
     suspend fun getCategories(
         @Header("Authorization") token: String

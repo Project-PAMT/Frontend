@@ -26,6 +26,7 @@ import java.util.*
 fun AktivitasScreen(
     token: String,
     onBack: () -> Unit,
+    onTransactionClick: (Int) -> Unit = {},
     viewModel: TransactionViewModel = viewModel()
 ) {
     val headerBlue = Color(0xFF1E90FF)
@@ -62,7 +63,6 @@ fun AktivitasScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,7 +78,6 @@ fun AktivitasScreen(
                 )
             }
 
-            // Content
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -142,7 +141,8 @@ fun AktivitasScreen(
                                     title = dateHeader,
                                     items = transactionList,
                                     redExpense = redExpense,
-                                    blueIncome = blueIncome
+                                    blueIncome = blueIncome,
+                                    onTransactionClick = onTransactionClick
                                 )
                             }
                         }
@@ -158,7 +158,8 @@ fun TransactionSection(
     title: String,
     items: List<TransactionData>,
     redExpense: Color,
-    blueIncome: Color
+    blueIncome: Color,
+    onTransactionClick: (Int) -> Unit = {}
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
@@ -173,7 +174,8 @@ fun TransactionSection(
                 TransactionListItem(
                     transaction = transaction,
                     redExpense = redExpense,
-                    blueIncome = blueIncome
+                    blueIncome = blueIncome,
+                    onClick = { onTransactionClick(transaction.id) }
                 )
             }
         }
@@ -184,11 +186,13 @@ fun TransactionSection(
 fun TransactionListItem(
     transaction: TransactionData,
     redExpense: Color,
-    blueIncome: Color
+    blueIncome: Color,
+    onClick: () -> Unit = {}
 ) {
     val isIncome = transaction.type.lowercase() == "income"
 
     Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(14.dp),
         color = Color.White,
         shadowElevation = 2.dp
