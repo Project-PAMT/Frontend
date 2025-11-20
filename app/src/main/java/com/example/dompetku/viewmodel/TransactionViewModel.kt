@@ -17,6 +17,7 @@ class TransactionViewModel(
     val error = mutableStateOf<String?>(null)
     val transactions = mutableStateOf<List<TransactionData>>(emptyList())
     val transactionDetail = mutableStateOf<TransactionData?>(null)
+    val updateSuccess = mutableStateOf<String?>(null)
 
     fun createTransaction(token: String, request: TransactionRequest) {
         viewModelScope.launch {
@@ -82,6 +83,37 @@ class TransactionViewModel(
 
             } catch (e: Exception) {
                 error.value = e.message ?: "Gagal memuat detail transaksi"
+            } finally {
+                loading.value = false
+            }
+        }
+    }
+
+    fun updateTransaction(
+        token: String,
+        transactionId: Int,
+        request: TransactionRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            loading.value = true
+            error.value = null
+
+            try {
+                val res = repo.updateTransaction(token, transactionId, request)
+
+                if (res.data != null) {
+                    updateSuccess.value = res.message.ifEmpty { "Transaksi berhasil diperbarui!" }
+                    getTransactions(token)
+                    getTransactionDetail(token, transactionId)
+                    onSuccess()
+                } else {
+                    onError(res.message ?: "Gagal memperbarui transaksi")
+                }
+
+            } catch (e: Exception) {
+                onError(e.message ?: "Terjadi kesalahan")
             } finally {
                 loading.value = false
             }

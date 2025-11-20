@@ -1,5 +1,7 @@
 package com.example.dompetku.data.repository
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.example.dompetku.data.dto.TransactionListResponse
 import com.example.dompetku.data.dto.TransactionRequest
 import com.example.dompetku.data.dto.TransactionResponse
@@ -26,6 +28,25 @@ class TransactionRepository {
         transactionId: Int
     ): TransactionResponse {
         return api.getTransactionDetail("Bearer $token", transactionId)
+    }
+
+    suspend fun updateTransaction(
+        token: String,
+        transactionId: Int,
+        request: TransactionRequest
+    ): TransactionResponse {
+        Log.d(TAG, "🔄 Updating transaction ID: $transactionId")
+        Log.d(TAG, "📤 Request data: $request")
+        Log.d(TAG, "🔑 Token: Bearer $token")
+
+        try {
+            val response = api.updateTransaction("Bearer $token", transactionId, request)
+            Log.d(TAG, "✅ Update success: ${response.message}")
+            return response
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Update error: ${e.message}", e)
+            throw e
+        }
     }
 
     suspend fun deleteTransaction(

@@ -167,9 +167,16 @@ fun MainApp() {
                     transactionId = transactionId,
                     onBack = { navController.popBackStack() },
                     onEdit = { id ->
-                        // TODO: Navigate ke edit screen (nanti bisa dibuat)
-                        // navController.navigate("edit_transaction/$id")
+                        navController.navigate("edit_transaction/$id")
                     }
+                )
+            }
+
+            composable("edit_transaction/{transactionId}") { backStackEntry ->
+                val transactionId = backStackEntry.arguments?.getString("transactionId")?.toInt() ?: 0
+                TransaksiEditScreen(
+                    transactionId = transactionId,
+                    onBack = { navController.popBackStack() }
                 )
             }
 

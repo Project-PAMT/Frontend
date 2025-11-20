@@ -46,6 +46,13 @@ interface ApiService {
         @Path("id") transactionId: Int
     ): TransactionResponse
 
+    @PUT("transactions/{id}")
+    suspend fun updateTransaction(
+        @Header("Authorization") token: String,
+        @Path("id") transactionId: Int,
+        @Body request: TransactionRequest
+    ): TransactionResponse
+
     @DELETE("transactions/{id}")
     suspend fun deleteTransaction(
         @Header("Authorization") token: String,
