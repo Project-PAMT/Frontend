@@ -51,7 +51,7 @@ fun MainApp() {
     }
 
     // START DESTINATION otomatis
-    val startRoute = if (isLoggedIn.value) NavDestination.Home else NavDestination.Login
+    val startRoute = if (isLoggedIn.value) NavDestination.Login else NavDestination.Login
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 

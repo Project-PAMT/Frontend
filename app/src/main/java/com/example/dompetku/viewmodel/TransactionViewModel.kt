@@ -106,7 +106,6 @@ class TransactionViewModel(
                 if (res.data != null) {
                     updateSuccess.value = res.message.ifEmpty { "Transaksi berhasil diperbarui!" }
                     getTransactions(token)
-                    getTransactionDetail(token, transactionId)
                     onSuccess()
                 } else {
                     onError(res.message ?: "Gagal memperbarui transaksi")

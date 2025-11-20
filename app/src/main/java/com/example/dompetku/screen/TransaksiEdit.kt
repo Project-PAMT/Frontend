@@ -314,7 +314,7 @@ fun TransaksiEditScreen(
                             it,
                             transactionId,
                             request,
-                            onSuccess = {},
+                            onSuccess = { /* KOSONG AJA */ },
                             onError = { errorMsg ->
                                 Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
                             }
